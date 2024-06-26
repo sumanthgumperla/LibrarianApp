@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -21,9 +23,11 @@ public class StudentService {
 
 
     @Autowired
+    @Qualifier("restTemplate1")
     RestTemplate restTemplate;
 
-
+    @Value("${finalurl}")
+    String serviceURL;
 
     public Student pullStudentDetails(Integer id) {
 
@@ -34,8 +38,8 @@ public class StudentService {
 //    headers.set("Accept", "text/plain");
 //
 //    HttpEntity<String> httpEntity = new HttpEntity<>(headers);
-String finalurl = "http://localhost:8081/student/getstudent/{Id}";
-     ResponseEntity<Student> responseEntity=restTemplate.getForEntity(finalurl, Student.class, Map.of("Id",id));
+
+     ResponseEntity<Student> responseEntity=restTemplate.getForEntity(serviceURL, Student.class, Map.of("Id",id));
 //    ResponseEntity<String> responseEntity = restTemplate.exchange("http://localhost:8081/student/getstudent", HttpMethod.GET, httpEntity, String.class);
 //    System.out.println(responseEntity.getStatusCode());
 //    System.out.println(responseEntity.getBody());

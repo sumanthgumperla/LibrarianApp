@@ -22,8 +22,16 @@ public class LibraryConfig {
 //        return new RestTemplate();
 //    }
 
-    @Bean
-    public RestTemplate restTemplate(RestTemplateBuilder builder) {
+    @Bean(name ="restTemplate1")
+    public RestTemplate restTemplate1(RestTemplateBuilder builder) {
+
+        return builder
+                .setConnectTimeout(Duration.ofMillis(3000))
+                .setReadTimeout(Duration.ofMillis(3000))
+                .build();
+    }
+    @Bean(name ="restTemplate2")
+    public RestTemplate restTemplate2(RestTemplateBuilder builder) {
 
         return builder
                 .setConnectTimeout(Duration.ofMillis(3000))

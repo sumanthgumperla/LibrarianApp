@@ -2,22 +2,20 @@ package com.library.librarymanagment.service;
 
 import com.library.librarymanagment.dao.AdminSignupDao;
 import com.library.librarymanagment.dao.BookDao;
+import com.library.librarymanagment.dao.FineDetailsDao;
 import com.library.librarymanagment.dao.IssueBookDao;
 //import com.library.librarymanagment.dao.StudentDao;
 import com.library.librarymanagment.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 public class AdminService {
-//    @Autowired
-//    StudentDao studentDao;
-
     @Autowired
     BookDao bookDao;
 
@@ -26,19 +24,14 @@ public class AdminService {
 
     @Autowired
     IssueBookDao issueBookDao;
-//
-//    public Student addStudent(Student student) {
-//        System.out.println(student.getName());
-//        System.out.println(student.getBranch());
-//        System.out.println(student.getDataOfAdding());
-//        return studentDao.save(student);
-//
-//    }
+
+    @Autowired
+    FineDetailsDao fineDetailsDao;
+
+    public static final Integer MAX_NUMBER_OF_DAYS_TO_HOLD_A_BOOK = 30;
 
     public void addBook(Books book) {
-
         bookDao.save(book);
-
     }
 
     public List<Books> searchbooks() {
@@ -107,5 +100,23 @@ public class AdminService {
         }
         return updatedBook.isIsavalable();
     }
+
+    public FineDetails findFineAmount(Integer id) {
+        FineDetails tempEntry =new FineDetails();
+        tempEntry.setFineAmount(issueBookDao.findFineAmount(MAX_NUMBER_OF_DAYS_TO_HOLD_A_BOOK,id));
+        tempEntry.setStudentId(id);
+        fineDetailsDao.save(tempEntry);
+        return fineDetailsDao.findById(id).orElse(null);
+    }
+
+    public boolean returnBook(Integer id) {
+        FineDetails Entry=fineDetailsDao.findById(id).orElse(null);
+        if(Entry.getFineAmount()==0) {
+            issueBookDao.deleteAllById(Collections.singleton(id));
+            return true;
+        }
+        else return false;
+    }
+
 
 }
